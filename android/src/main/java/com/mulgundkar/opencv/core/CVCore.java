@@ -34,6 +34,23 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 public class CVCore {
 
     @SuppressLint("MissingPermission")
+    public byte[] getRotationMatrix2D(ArrayList eyeCenter, double angle, double scale) {
+        byte[] byteArray = new byte[0];
+        try {            
+            
+            // convert center eye
+            Point center = new Point( (double) eyeCenter.get(0), (double) eyeCenter.get(1));
+            
+            // get rotation matrix 2D
+            Mat matOfRatation = Imgproc.getRotationMatrix2D(center, angle, scale);
+            byteArray = matOfRatation.toArray();
+        } catch (Exception e) {
+            System.out.println("OpenCV Error: " + e.toString());
+        }
+        return byteArray;
+    }
+
+    @SuppressLint("MissingPermission")
     public byte[] cvtColor(byte[] byteData, int outputType) {
         byte[] byteArray = new byte[0];
         try {

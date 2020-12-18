@@ -59,6 +59,8 @@ public class OpenCV4Plugin implements FlutterPlugin, MethodCallHandler {
             case "getPlatformVersion":
                 result.success("OpenCV " + Core.VERSION);
                 break;
+            case "getRotationMatrix2D":
+                result.success(core.getRotationMatrix2D((ArrayList) call.argument("eyeCenter"), (double) call.argument("angle"), (double) call.argument("scale")));
             case "cvtColor":
                 result.success(core.cvtColor((byte[]) call.argument("byteData"), (int) call.argument("outputType")));
                 break;

@@ -497,6 +497,16 @@ class ImgProc {
       markerTriangleUp = 5,
       markerTriangleDown = 6;
 
+
+  static Future<dynamic> getRotationMatrix2D(List<double> eyeCenter, double angle, double scale) async{
+    final dynamic result = await _channel.invokeMethod(
+      'getRotationMatrix2D', {
+        'eyeCenter': eyeCenter, 
+        'angle': angle, 
+        'scale': scale});
+    return result;
+  }
+
   /// Function takes input file's byte array data & color type.
   static Future<dynamic> cvtColor(Uint8List byteData, int outputType) async {
     /// Variable to store operation result
