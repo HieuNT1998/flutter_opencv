@@ -34,21 +34,39 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 public class CVCore {
 
     @SuppressLint("MissingPermission")
-    public byte[] getRotationMatrix2D(ArrayList eyeCenter, double angle, double scale) {
+    public byte[] faceAlign(byte[] byteData, ArrayList eyeCenter, ArrayList desiredLeftEye, double angle, double scale, ArrayList dstSize){
         byte[] byteArray = new byte[0];
-        try {            
+        try {
+            int dstWidth = (int) dstSize.get(0);   
+            int dstHeight = (int) dstSize.get(1);
+            Mat dst = new Mat();
             
-            // convert center eye
-            Point center = new Point( (double) eyeCenter.get(0), (double) eyeCenter.get(1));
+            Mat src = Imgcodecs.imdecode(new MatOfByte(byteData), Imgcodecs.IMREAD_UNCHANGED);    // Decode image from input byte array
             
-            // get rotation matrix 2D
-            Mat matOfRatation = Imgproc.getRotationMatrix2D(center, angle, scale);
-            byteArray = matOfRatation.toArray();
+            Mat rotMat = new Mat(2, 3, CvType.CV_32FC1);                                          // defind rotation mat
+            
+            Point center = new Point((int) eyeCenter.get(0), (int) eyeCenter.get(1));       // defind eye center point
+            
+            rotMat = Imgproc.getRotationMatrix2D(center, angle, scale);                           // get rotation matrix
+            double rotMat02 = rotMat.get(0,2)[0] + (dstWidth * 0.5 - (int) eyeCenter.get(0));
+            double rotMat12 = rotMat.get(1,2)[0] + (dstHeight * (double) desiredLeftEye.get(1) - (int) eyeCenter.get(1));
+            rotMat.put(0, 2, rotMat02);
+            rotMat.put(1, 2, rotMat12);
+
+            // rotate
+            Imgproc.warpAffine(src, dst, rotMat, new Size(dstWidth,dstHeight));
+            
+            // instantiating an empty MatOfByte class
+            MatOfByte matOfByte = new MatOfByte();            
+            // Converting the Mat object to MatOfByte
+            Imgcodecs.imencode(".png", dst, matOfByte);
+            byteArray = matOfByte.toArray();    
         } catch (Exception e) {
             System.out.println("OpenCV Error: " + e.toString());
         }
         return byteArray;
     }
+
 
     @SuppressLint("MissingPermission")
     public byte[] cvtColor(byte[] byteData, int outputType) {

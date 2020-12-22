@@ -498,12 +498,15 @@ class ImgProc {
       markerTriangleDown = 6;
 
 
-  static Future<dynamic> getRotationMatrix2D(List<double> eyeCenter, double angle, double scale) async{
+  static Future<dynamic> faceAlign(Uint8List byteData, List<int> eyeCenter, List<double> desiredLeftEye, double angle, double scale, List<int> dstSize) async{
     final dynamic result = await _channel.invokeMethod(
-      'getRotationMatrix2D', {
+      'faceAlign', {
+        'byteData' : byteData,
         'eyeCenter': eyeCenter, 
+        'desiredLeftEye': desiredLeftEye,
         'angle': angle, 
-        'scale': scale});
+        'scale': scale,
+        'dstSize': dstSize});
     return result;
   }
 
